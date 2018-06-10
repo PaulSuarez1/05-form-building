@@ -3,7 +3,7 @@
 let articleView = {};
 
 articleView.populateFilters = () => {
-  $('article').each(function() {
+  $('article').each(function () {
     if (!$(this).hasClass('template')) {
       let val = $(this).find('address a').text();
       let optionTag = `<option value="${val}">${val}</option>`;
@@ -22,7 +22,7 @@ articleView.populateFilters = () => {
 };
 
 articleView.handleAuthorFilter = () => {
-  $('#author-filter').on('change', function() {
+  $('#author-filter').on('change', function () {
     if ($(this).val()) {
       $('article').hide();
       $(`article[data-author="${$(this).val()}"]`).fadeIn();
@@ -35,7 +35,7 @@ articleView.handleAuthorFilter = () => {
 };
 
 articleView.handleCategoryFilter = () => {
-  $('#category-filter').on('change', function() {
+  $('#category-filter').on('change', function () {
     if ($(this).val()) {
       $('article').hide();
       $(`article[data-category="${$(this).val()}"]`).fadeIn();
@@ -48,7 +48,7 @@ articleView.handleCategoryFilter = () => {
 };
 
 articleView.handleMainNav = () => {
-  $('nav').on('click', '.tab', function(e) {
+  $('nav').on('click', '.tab', function (e) {
     e.preventDefault();
     $('.tab-content').hide();
     $(`#${$(this).data('content')}`).fadeIn();
@@ -59,7 +59,7 @@ articleView.handleMainNav = () => {
 
 articleView.setTeasers = () => {
   $('.article-body *:nth-of-type(n+2)').hide();
-  $('article').on('click', 'a.read-on', function(e) {
+  $('article').on('click', 'a.read-on', function (e) {
     e.preventDefault();
     if ($(this).text() === 'Read on →') {
       $(this).parent().find('*').fadeIn();
@@ -67,7 +67,7 @@ articleView.setTeasers = () => {
     } else {
       $('body').animate({
         scrollTop: ($(this).parent().offset().top)
-      },200);
+      }, 200);
       $(this).html('Read on &rarr;');
       $(this).parent().find('.article-body *:nth-of-type(n+2)').hide();
     }
@@ -75,7 +75,7 @@ articleView.setTeasers = () => {
 };
 
 // COMMENT: Where is this function called? Why?
-// PUT YOUR RESPONSE HERE
+// it's being called in the new.html. It's called there cause that's the page that uses this function.
 articleView.initNewArticlePage = () => {
   // TODO: Ensure the main .tab-content area is revealed. We might add more tabs later or otherwise edit the tab navigation.
 
@@ -83,34 +83,46 @@ articleView.initNewArticlePage = () => {
   // TODO: The new articles we create will be copy/pasted into our source data file.
   // Set up this "export" functionality. We can hide it for now, and show it once we have data to export.
 
-  $('#article-json').on('focus', function(){
+  $('#article-json').on('focus', function () {
     this.select();
   });
 
   // TODO: Add an event handler to update the preview and the export field if any inputs change.
 
+  $('#new-form').on('change', articleView.create);
 };
 
 articleView.create = () => {
   // TODO: Set up a variable to hold the new article we are creating.
-  // Clear out the #articles element, so we can put in the updated preview
-
+  let article;
+  // TODO: Clear out the #articles element, so we can put in the updated preview
+  $('#articles').empty();
 
   // TODO: Instantiate an article based on what's in the form fields:
+  article = new Article({
+    title: $('#article-title').val(),
+    author: $('#article-author').val(),
+    authorUrl: $('#article-author-url').val(),
+    body: $('#article-body').val(),
+    publishedOn: $('#article-published').val(),
+    category: $('#article-category').val()
 
+  });
+
+  console.log(article);
 
   // TODO: Use our interface to the Handblebars template to put this new article into the DOM:
-
+  $('#articles').append(article.toHtml());
 
   // TODO: Activate the highlighting of any code blocks; look at the documentation for hljs to see how to do this by placing a callback function in the .each():
   $('pre code').each();
 
   // TODO: Show our export field, and export the new article as JSON, so it's ready to copy/paste into blogArticles.js:
-
+  $('#article-json').val(JSON.stringify(article));
 };
 
 // COMMENT: Where is this function called? Why?
-// PUT YOUR RESPONSE HERE
+// It's called on the index.html, which is the oonly page we wantt o run all these functions. Calling this one function calls all of the functions used on this page.
 articleView.initIndexPage = () => {
   articles.forEach(article => $('#articles').append(article.toHtml()));
   articleView.populateFilters();
